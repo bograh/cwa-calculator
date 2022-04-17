@@ -3,7 +3,8 @@
 using namespace std;
 
 void CWA() {
-	string course_code;
+	string course_code_letters;
+	int course_code_num;
 	int credits;
 	double midsem_score;
 	double end_of_sem_score;
@@ -17,8 +18,8 @@ void CWA() {
 	for (int i = 0; i < num_of_courses; i++)
 	{
 		cout << "Enter course code: ";
-		cin >> course_code;
-		cout << "Enter credit hours for course: ";
+		cin >> course_code_letters >> course_code_num;
+		cout << "Enter credit hours for " << course_code_letters << " " << course_code_num << ": ";
 		cin >> credits;
 		cout << "Enter midsem score (30%): ";
 		cin >> midsem_score;
