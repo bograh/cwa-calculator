@@ -3,23 +3,30 @@ AUTHOR	->	BERNARD OGRAH
 DATE	->	16th APRIL, 2022
 PROGRAM	->	THIS IS A PROGRAM TO CALCULATE THE CUMULATIVE WEIGHTED AVERAGE OF A STUDENT AT KNUST.
 '''
+import os
+
+########## ~ CHECKS IF THE FILE FOR THE RESULTS EXISTS OR NOT ~ ##########
+
+filename = 'Results/cwaResults.txt'
+file_csv = 'Results/cwaResults.csv'
+
+if os.path.exists(filename) or os.path.exists(file_csv):
+    append_write = 'a' # append if already exists
+else:
+    append_write = 'w' # make a new file if not
+
+##########################################################################
 
 
 ########## ~ FUNCTION FOR FILE CONTROL ~ ##########
 
 def files():
-	global f
+	global f_csv
 	global file
-	global f_add
-	global file_add
-
-	# file = open('cwa.txt', 'w')
-	# f = open('cwa.csv', 'w')
-	file_add = open('cwa.txt', 'a')
-	f_add = open('cwa.csv', 'a')
+	file = open(filename, append_write)
+	f_csv = open(file_csv, append_write)
 
 ###################################################
-
 
 
 ########## ~ FUNTION CONTAINING WELCOME MESSAGE ~ ##########
@@ -31,7 +38,6 @@ def main():
 ############################################################
 
 
-
 ########## ~ FUNCTION CONTAING CODES FOR THE MAIN FUNCTIONALITY OF THE APP ~ ##########
 def CWA():
 	num_of_semester = int(input("Enter number of semesters completed: "))
@@ -40,9 +46,9 @@ def CWA():
 	
 	global total_credits
 	total_credits = 0
-	weighted_average = 0
+	global overall_total
+	overall_total = 0
 	average_sum = 0
-
 
 	# Loop through the number of semesters entered
 	for no_semester in range(1, num_of_semester+1):
@@ -73,23 +79,23 @@ def CWA():
 			
 	###########Calculations for the Cumulative Weighted Average - CWA #############			
 
-			global end_of_sem_total_score
+			end_of_sem_total = midsem_exam_score + end_of_sem_exam_score
+			overall_total = overall_total + end_of_sem_total
 
-			end_of_sem_total_score = midsem_exam_score + end_of_sem_exam_score
 			total_credits = total_credits + credits
 
-			product_sum = credits * (end_of_sem_total_score)
+			product_sum = credits * (end_of_sem_total)
 
 			average_sum = average_sum + product_sum
 		print("\n")
+	
 
 	global cumulative_weighted_average
 	cumulative_weighted_average = average_sum / total_credits
-	
+
 
 #####################################################################################################################
 	print("\n")
-
 
 
 #################### ~ THIS BLOCK CONTAINS CODE FOR INDIVIDUAL STUDENT CREDENTIALS ~ ####################
@@ -120,36 +126,41 @@ def studentCredentials():
 			else:
 				grade = "Fail"
 			###########################
-
-			print("INDEX NUMBER\tEND OF SEM SCORE\tTOTAL CREDITS\t   C W A\t GRADE\n")
-			print("************\t****************\t*************\t   *****\t *****\n")
-			print(f" {indexNo}\t\t     {end_of_sem_total_score}\t\t {total_credits}\t\t   {round(cumulative_weighted_average, 2)}\t\t {grade}\n")
+			print("INDEX NUMBER\tFINAL TOTAL SCORE\tTOTAL CREDITS\t   C W A\t\t GRADE\n")
+			print("************\t*****************\t*************\t   *****\t\t *****\n")
+			print(f" {indexNo}\t\t     {overall_total}\t\t {total_credits}\t\t   {round(cumulative_weighted_average, 2)}\t\t   {grade}\n")
 
 		
 			########### ~ THIS BLOCK WRITES THE RESULTS TO A TEXT FILE ~ ##########
-
-			file_add.write(
-				# "INDEX NUMBER\tEND OF SEM SCORE\tTOTAL CREDITS\t   C W A\t GRADE\n"
-				# "************\t****************\t*************\t   *****\t *****\n"
-				f" {indexNo}\t\t     {end_of_sem_total_score}\t\t {total_credits}\t\t   {round(cumulative_weighted_average, 2)}\t\t {grade}\n"
-				)
+			if append_write == 'w':
+				file.write(
+					"INDEX NUMBER\tFINAL TOTAL SCORE\tTOTAL CREDITS\t   C W A\t\t GRADE\n"
+					"************\t*****************\t*************\t   *****\t\t *****\n"
+					f" {indexNo}\t\t     {overall_total}\t\t {total_credits}\t\t   {round(cumulative_weighted_average, 2)}\t\t   {grade}\n"
+					)
+			elif append_write == 'a':
+				file.write(
+					f" {indexNo}\t\t     {overall_total}\t\t {total_credits}\t\t   {round(cumulative_weighted_average, 2)}\t   {grade}\n"
+					)
 
 			#######################################################################
 		
 			########### ~ THIS BLOCK WRITES THE RESULTS TO A CSV FILE ~ ##########
-
-			f_add.write(
-				# "INDEX NUMBER,END OF SEM SCORE,TOTAL CREDITS,C W A,GRADE\n"
-				f" {indexNo},{end_of_sem_total_score},{total_credits},{round(cumulative_weighted_average, 2)},{grade}\n"
-				)
+			if append_write == 'w':
+				f_csv.write(
+					"INDEX NUMBER,FINAL TOTAL SCORE,TOTAL CREDITS,C W A,GRADE\n"
+					f" {indexNo},{overall_total},{total_credits},{round(cumulative_weighted_average, 2)},{grade}\n"
+					)
+			elif append_write == 'a':
+				f_csv.write(
+					f" {indexNo},{overall_total},{total_credits},{round(cumulative_weighted_average, 2)},{grade}\n"
+					)
 	
 			######################################################################
 		
-
 	tabularResults()
 
 #########################################################################################################
-
 
 
 ########## ~ FUNCTION CALLS ~ ##########
